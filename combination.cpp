@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <iostream>
 #include <chrono>
-
+#include <iostream>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -49,55 +49,72 @@ private:
 }; 
 
 
-void permute(char *data, int n)
-{
-    int n = sizeof(*data);
-    cout << n;
-    cin.get();
-}
-void combinationUtil(char arr[26], char data[], int start, int end, int index, int r)
-{
-    int i, j;
+vector<char> alfabeto = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 
+                         'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 
+                         's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
-    if (index == r)
-    {
-        for (j = 0; j < r; j++)
-            cout << data[j];
-            permute(&data[j], r);
-            //cout << "";
-            //printf("%i ", data[j]);
-        printf("\n");
-        return;
+void permutacoes(vector<char> &v, int n, int k, int tamanho) {
+  // Se k for igual ao tamanho do alfabeto, então todas as permutações foram geradas
+  if (k == tamanho) {
+    // Imprime a permutação atual
+    for (int i = 0; i < tamanho; i++) {
+      cout << v[i];
     }
+    cout << endl;
+    return;
+  }
 
-    for (i = start; i <= end && end - i + 1 >= r - index; i++)
-    {
-        data[index] = arr[i];
-        combinationUtil(arr, data, i + 1, end, index + 1, r);
-    }
+  // Para cada letra do alfabeto
+  for (char c : alfabeto) {
+    // Adiciona a letra atual à permutação
+    v[k] = c;
+
+    // Chama a função recursivamente para gerar as permutações das letras restantes
+    permutacoes(v, n, k + 1, tamanho);
+
+    // Remove a letra atual da permutação
+    v[k] = ' ';
+  }
 }
-
-void printCombination(char arr[26], int n, int r)
-{
-    char data[r];
-    //printf("%s", arr[0]);
-    combinationUtil(arr, data, 0, n - 1, 0, r);
-}
-
 
 
 int main()
 {
-    Timer timer;
 
+    //char arr[26] = {'a','b','c','d','e','f','g','h','i','j','k','l','m',
+                    //'n','o','p','q','r','s','t','u','v','w','x','y','z'};
+    //int r = 4;
+    //int n = sizeof(arr) / sizeof(arr[0]);
+    //printCombination(arr, 26, 3);
+
+
+    Timer timer;
     timer.start();
 
+    int n = alfabeto.size();
 
-    char arr[26] = {'a','b','c','d','e','f','g','h','i','j','k','l','m',
-                    'n','o','p','q','r','s','t','u','v','w','x','y','z'};
-    int r = 4;
-    //int n = sizeof(arr) / sizeof(arr[0]);
-    printCombination(arr, 26, 3);
+    // Vetor para armazenar a permutação atual
+    vector<char> a(1);
+    vector<char> b(2);
+    vector<char> c(3);
+    vector<char> d(4);
+
+
+    #pragma omp parallel
+    {
+        permutacoes(a, n, 0, 1);
+        permutacoes(b, n, 0, 2);
+        permutacoes(c, n, 0, 3);
+        permutacoes(d, n, 0, 4);
+    }
+
+    
+    
+    
+
+    
+
+
 
 
     timer.stop();
